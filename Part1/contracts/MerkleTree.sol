@@ -4,7 +4,7 @@ pragma solidity ^0.8.0;
 import { PoseidonT3 } from "./Poseidon.sol"; //an existing library to perform Poseidon hash on solidity
 import "./verifier.sol"; //inherits with the MerkleTreeInclusionProof verifier contract
 
-contract MerkleTree is Verifier {
+contract MerkleTree is Groth16Verifier {
     uint256[] public hashes; // the Merkle tree in flattened array form
     uint256 public index = 0; // the current index of the first unfilled leaf
     uint256 public root; // the current Merkle root
@@ -13,7 +13,7 @@ contract MerkleTree is Verifier {
         // [assignment] initialize a Merkle tree of 8 with blank leaves
         // 초기 8개의 리프 노드를 0으로 설정 후 해시
         for (uint256 i = 0; i < 8; i++) {
-            hashes.push(PoseidonT3.poseidon([uint256(0)])); // 리프 노드 0 해시값
+            hashes.push(PoseidonT3.poseidon([uint256(0), uint256(0)])); // 리프 노드 0 해시값
         }
 
         // 부모 노드들 계산 (3 레벨이므로)
@@ -66,14 +66,14 @@ contract MerkleTree is Verifier {
     }
 
     function verify(
-            uint[2] memory a,
-            uint[2][2] memory b,
-            uint[2] memory c,
-            uint[1] memory input
+            uint[2] calldata a,
+            uint[2][2] calldata b,
+            uint[2] calldata c,
+            uint[1] calldata input
         ) public view returns (bool) {
 
         // [assignment] verify an inclusion proof and check that the proof root matches current root
         // 증명된 루트가 현재 루트와 일치하는지 확인
-        return (input[0] == root && Verifier.verifyProof(a, b, c, input));
+        return (input[0] == root && Groth16Verifier.verifyProof(a, b, c, input));
     }
 }
