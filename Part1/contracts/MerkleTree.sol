@@ -2,9 +2,9 @@
 pragma solidity ^0.8.0;
 
 import { PoseidonT3 } from "./Poseidon.sol"; //an existing library to perform Poseidon hash on solidity
-// import "./verifier.sol"; //inherits with the MerkleTreeInclusionProof verifier contract
+import "./verifier.sol"; //inherits with the MerkleTreeInclusionProof verifier contract
 
-contract MerkleTree {
+contract MerkleTree is Verifier {
     uint256[] public hashes; // the Merkle tree in flattened array form
     uint256 public index = 0; // the current index of the first unfilled leaf
     uint256 public root; // the current Merkle root
