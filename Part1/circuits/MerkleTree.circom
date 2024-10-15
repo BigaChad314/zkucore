@@ -17,17 +17,17 @@ template CheckRoot(n) { // compute the root of a MerkleTree of n Levels
         intermediate[i] = leaves[i];
     }
 
-    // 각 레벨별로 hashing
-    var offset = 0;
-    for (var level = 0; level < n; level++) {
-        var numNodes = 2**(n - level - 1); // 현 레벨의 노드 개수
+    for(var level = 0; level < n; level++){
+        var levelSize = 2**(n-level-1);
+        var halfSize = levelSize \ 2;
 
-        for (var i = 0; i < numNodes; i++) {
-            // Poseidon을 사용해서 두 child node의 해시값을 계산
-            intermediate[offset + numNodes + i] = Poseidon([intermediate[offset + 2*i], intermediate[offset + 2*i + 1]]);
+        for(var i = 0; i < levelSize; i++){
+            intermediate[i] = Poseidon([intermediate[2*i], intermediate[2*i+1]]);
         }
+
     }
-}
+     root <== intermediate[0];
+    }
 
 template MerkleTreeInclusionProof(nLevels) {
     signal input leaf; // Merkle Tree에서 증명하고자 하는 리프 노드. 특정 데이터를 나타냄.
